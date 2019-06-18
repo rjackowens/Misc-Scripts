@@ -3,7 +3,6 @@
     $App = Start-Process notepad.exe -PassThru
 
     }
-    
 
 Function Kill-Notepad {
 
@@ -13,7 +12,7 @@ Function Kill-Notepad {
     $wshell.SendKeys('%{F4}')
 
     }
-
+    
 while ($true) {
 
     Run-Notepad
@@ -22,4 +21,3 @@ while ($true) {
     Start-Sleep -Seconds 5
 
     }
-
