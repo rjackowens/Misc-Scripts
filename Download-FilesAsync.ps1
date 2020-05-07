@@ -4,20 +4,24 @@ if (!(Test-Path $downloadFolder -PathType Container)) {
 }
 
 $files = @(
-    @{name="Docker Desktop"; url="https://download.docker.com/win/stable/Docker%20Desktop%20Installer.exe"; path="$downloadFolder\DockerDesktop.exe"}
-    @{name=".NET CLI"; url="https://dot.net/v1/dotnet-install.ps1"; path="$downloadFolder\dotnet-install.ps1"}
-    @{name="AWS PowerShell"; url="https://sdk-for-net.amazonwebservices.com/ps/v4/latest/AWSPowerShell.zip"; path="$downloadFolder\AWSPowerShell.zip"}
+    @{name="Docker Desktop"; url="https://download.docker.com/win/stable/Docker%20Desktop%20Installer.exe"; path="$downloadFolder\DockerDesktop.exe"; exists=Test-Path "$downloadFolder\DockerDesktop.exe"}
+    @{name=".NET CLI"; url="https://dot.net/v1/dotnet-install.ps1"; path="$downloadFolder\dotnet-install.ps1"; exists=Test-Path "$downloadFolder\dotnet-install.ps1"}
+    @{name="AWS PowerShell"; url="https://sdk-for-net.amazonwebservices.com/ps/v4/latest/AWSPowerShell.zip"; path="$downloadFolder\AWSPowerShell.zip"; exists=Test-Path "$downloadFolder\AWSPowerShell.zip"}
 )
 
 $files | ForEach-Object {
-        
-    Start-Job -name $_.name -ScriptBlock {
+    
+    if (!($_.exists)) {
 
-        param($URL, $PATH)
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -uri $URL -OutFile $PATH  
+        Start-Job -name $_.name -ScriptBlock {
 
-    } -ArgumentList $_.url, $_.path
+            param($URL, $PATH)
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            Invoke-WebRequest -uri $URL -OutFile $PATH  
+    
+        } -ArgumentList $_.url, $_.path
+
+    }
 
 }
 
